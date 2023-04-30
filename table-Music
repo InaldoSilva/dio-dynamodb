@@ -1,0 +1,65 @@
+import boto3
+
+# Crie uma conexão com o serviço DynamoDB
+dynamodb = boto3.resource('dynamodb')
+
+# Crie a tabela Music
+table = dynamodb.create_table(
+    TableName='Music',
+    KeySchema=[
+        {
+            'AttributeName': 'artist',
+            'KeyType': 'HASH'
+        },
+        {
+            'AttributeName': 'title',
+            'KeyType': 'RANGE'
+        }
+    ],
+    AttributeDefinitions=[
+        {
+            'AttributeName': 'artist',
+            'AttributeType': 'S'
+        },
+        {
+            'AttributeName': 'title',
+            'AttributeType': 'S'
+        }
+    ],
+    ProvisionedThroughput={
+        'ReadCapacityUnits': 5,
+        'WriteCapacityUnits': 5
+    }
+)
+
+# Aguarde a criação da tabela
+table.meta.client.get_waiter('table_exists').wait(TableName='Music')
+
+# Insira alguns itens de música na tabela
+table.put_item(
+    Item={
+        'artist': 'Coldplay',
+        'title': 'Viva La Vida',
+        'album': 'Viva La Vida or Death and All His Friends',
+        'year': 2008,
+        'genre': 'Alternative'
+    }
+)
+table.put_item(
+    Item={
+        'artist': 'Radiohead',
+        'title': 'Karma Police',
+        'album': 'OK Computer',
+        'year': 1997,
+        'genre': 'Alternative'
+    }
+)
+table.put_item(
+    Item={
+        'artist': 'Pink Floyd',
+        'title': 'Wish You Were Here',
+        'album': 'Wish You Were Here',
+        'year': 1975,
+        'genre': 'Progressive Rock'
+    }
+)
